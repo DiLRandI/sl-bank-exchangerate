@@ -1,46 +1,44 @@
 package main
 
 import (
-	"context"
+	"os"
 	"plugin"
 
 	"github.com/DiLRandI/sl-bank-exchange-rate-console.git/config"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
-const Version = "development"
+var Version = "development"
 
 const appName = "SL Bank Exchange Rate Monitor"
 
 func main() {
-	ctx := context.Background()
+	logger := zerolog.New(os.Stdout).With().
+		Str("app", appName).
+		Str("versoin", Version).
+		Logger()
 
-	logger := logrus.WithContext(ctx).WithFields(logrus.Fields{
-		"app":     appName,
-		"version": Version,
-	})
-
-	logger.Info("starting the app")
+	logger.Info().Msg("starting the app")
 
 	config, err := config.ParseConfig("config.json")
 	if err != nil {
-		logger.Fatal(err)
+		logger.Fatal().Err(err)
 	}
 
 	for _, p := range config.Plugins {
 		plugin, err := plugin.Open(p.File)
 		if err != nil {
-			logger.Errorf("unable to open the plugin %s, %v", p.Name, err)
+			logger.Err(err).Msgf("unable to open the plugin %s", p.Name)
 		}
 
 		fn, err := plugin.Lookup("CanRun")
 		if err != nil {
-			logrus.Fatal(err)
+			logger.Fatal().Err(err)
 		}
 
 		hello, ok := fn.(func(msg string))
 		if !ok {
-			logrus.Fatal("failed")
+			logger.Fatal().Msg("unable to load the function")
 		}
 
 		hello("Hello from main")

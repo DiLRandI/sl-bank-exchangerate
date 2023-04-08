@@ -1,24 +1,23 @@
 package main
 
 import (
-	"context"
+	"os"
 
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
-var bocLogger logrus.FieldLogger
+const pluginName = "BOC"
+
+var bocLogger zerolog.Logger
+var Version = "devlopment"
 
 func init() {
-	ctx := context.Background()
-
-	logger := logrus.WithContext(ctx).WithFields(logrus.Fields{
-		"plugin":  "boc",
-		"version": 0.1,
-	})
-
-	bocLogger = logger
+	bocLogger = zerolog.New(os.Stdout).With().
+		Str("plugin", pluginName).
+		Str("versoin", Version).
+		Logger()
 }
 
 func CanRun(msg string) {
-	bocLogger.Info("Hi I got your message, ", msg)
+	bocLogger.Info().Msgf("Hi I got your message, ", msg)
 }
