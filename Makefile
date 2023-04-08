@@ -1,6 +1,6 @@
 
 build-plugins:
-	go build -buildmode=plugin -o ./bin/boc.so plugins/boc/boc.go
+	go build -buildmode=plugin -o ./bin/boc.so ./cmd/plugins/boc/boc.go
 
 build-app:
 	go build -o ./bin/slexchangerate ./cmd/slexchangerate/main.go

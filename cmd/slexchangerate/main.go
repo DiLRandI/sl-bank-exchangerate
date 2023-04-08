@@ -4,7 +4,8 @@ import (
 	"os"
 	"plugin"
 
-	"github.com/DiLRandI/sl-bank-exchange-rate-console.git/config"
+	"github.com/DiLRandI/sl-bank-exchangerate/config"
+	"github.com/DiLRandI/sl-bank-exchangerate/contract"
 	"github.com/rs/zerolog"
 )
 
@@ -15,7 +16,7 @@ const appName = "SL Bank Exchange Rate Monitor"
 func main() {
 	logger := zerolog.New(os.Stdout).With().
 		Str("app", appName).
-		Str("versoin", Version).
+		Str("version", Version).
 		Logger()
 
 	logger.Info().Msg("starting the app")
@@ -25,22 +26,24 @@ func main() {
 		logger.Fatal().Err(err)
 	}
 
+	plugins := make(map[string]contract.PluginContract)
+
 	for _, p := range config.Plugins {
 		plugin, err := plugin.Open(p.File)
 		if err != nil {
 			logger.Err(err).Msgf("unable to open the plugin %s", p.Name)
 		}
 
-		fn, err := plugin.Lookup("CanRun")
+		fnLookup, err := plugin.Lookup("Convert")
 		if err != nil {
 			logger.Fatal().Err(err)
 		}
 
-		hello, ok := fn.(func(msg string))
+		fn, ok := fnLookup.(contract.PluginContract)
 		if !ok {
-			logger.Fatal().Msg("unable to load the function")
+			logger.Fatal().Msg("function not satisfy the contract")
 		}
 
-		hello("Hello from main")
+		plugins[p.Name] = fn
 	}
 }

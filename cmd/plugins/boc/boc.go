@@ -14,10 +14,10 @@ var Version = "devlopment"
 func init() {
 	bocLogger = zerolog.New(os.Stdout).With().
 		Str("plugin", pluginName).
-		Str("versoin", Version).
+		Str("version", Version).
 		Logger()
 }
 
-func CanRun(msg string) {
-	bocLogger.Info().Msgf("Hi I got your message, ", msg)
+func Convert(string, string) (error, int) {
+	return nil, 0
 }

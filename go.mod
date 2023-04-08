@@ -1,5 +1,4 @@
-module github.com/DiLRandI/sl-bank-exchange-rate-console.git
-
+module github.com/DiLRandI/sl-bank-exchangerate
 go 1.20
 
 require github.com/rs/zerolog v1.29.0
