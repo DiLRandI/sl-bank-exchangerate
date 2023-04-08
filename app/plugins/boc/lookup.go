@@ -38,7 +38,7 @@ func (l *Lookup) Lookup(code string) (int, error) {
 	value := 0
 	keyFound := false
 
-	if err := l.scraper.Visit("td", func(content string) {
+	l.scraper.Register("td", func(content string) {
 		if keyFound {
 			val, err := strconv.ParseFloat(strings.TrimSpace(content), 64)
 			if err != nil {
@@ -55,7 +55,9 @@ func (l *Lookup) Lookup(code string) (int, error) {
 			l.logger.Info().Msgf("key %q is found", key)
 			keyFound = !keyFound
 		}
-	}); err != nil {
+	})
+
+	if err := l.scraper.Visit(); err != nil {
 		return 0, fmt.Errorf("error visiting, %w", err)
 	}
 
@@ -63,13 +65,11 @@ func (l *Lookup) Lookup(code string) (int, error) {
 }
 
 func lookupMatcher(code string) (string, error) {
-	for _, v := range common.LookupKeys {
-		switch v {
-		case "USD":
-			return "US Dollar", nil
-		case "EUR":
-			return "Euro", nil
-		}
+	switch code {
+	case "USD":
+		return "US Dollar", nil
+	case "EUR":
+		return "Euro", nil
 	}
 
 	return "", fmt.Errorf("key %q was not mapped, %w", code, ErrInvalidCode)

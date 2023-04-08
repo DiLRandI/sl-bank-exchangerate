@@ -20,15 +20,17 @@ type Scraper struct {
 func New(c *Config) *Scraper {
 	return &Scraper{
 		url:       c.URL,
-		collector: colly.NewCollector(colly.AllowURLRevisit(), colly.CacheDir("./")),
+		collector: colly.NewCollector(colly.AllowURLRevisit(), colly.CacheDir("./temp")),
 	}
 }
 
-func (s *Scraper) Visit(tag string, fn ContentFn) error {
+func (s *Scraper) Register(tag string, fn ContentFn) {
 	s.collector.OnHTML(tag, func(h *colly.HTMLElement) {
 		fn(h.Text)
 	})
+}
 
+func (s *Scraper) Visit() error {
 	if err := s.collector.Visit(s.url); err != nil {
 		return fmt.Errorf("unable to visit the url %s, %w", s.url, err)
 	}
