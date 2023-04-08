@@ -2,7 +2,8 @@
     "plugins": [
         {
             "name":"boc",
-            "file":"boc.so"
+            "file":"boc.so",
+            "endpoint": "https://www.boc.web.lk/ExRates"
         }
     ]
 }

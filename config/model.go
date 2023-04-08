@@ -5,6 +5,7 @@ type Config struct {
 }
 
 type Plugin struct {
-	Name string `json:"name"`
-	File string `json:"file"`
+	Name     string `json:"name"`
+	File     string `json:"file"`
+	Endpoint string `json:"endpoint"`
 }

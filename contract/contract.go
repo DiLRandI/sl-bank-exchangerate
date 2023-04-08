@@ -1,3 +1,6 @@
 package contract
 
-type PluginContract = func(string, string) (error, int)
+type (
+	Initialize = func(url string) Convert
+	Convert    = func(code string) (int, error)
+)
