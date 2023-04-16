@@ -1,9 +1,14 @@
 {
     "plugins": [
         {
-            "name":"boc",
-            "file":"boc.so",
+            "name": "boc",
+            "file": "boc.so",
             "endpoint": "https://www.boc.web.lk/ExRates"
+        },
+        {
+            "name": "hnb",
+            "file": "hnb.so",
+            "endpoint": "https://www.hnb.net/exchange-rates"
         }
     ]
 }
