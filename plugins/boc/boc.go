@@ -2,30 +2,28 @@ package main
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 
 	"github.com/DiLRandI/sl-bank-exchangerate/app/plugins/boc"
 	"github.com/DiLRandI/sl-bank-exchangerate/app/scraper"
 	"github.com/DiLRandI/sl-bank-exchangerate/contract"
-	"github.com/rs/zerolog"
 )
 
 const pluginName = "BOC"
 
 var (
-	bocLogger zerolog.Logger
+	bocLogger *slog.Logger
 	Version   = "devlopment"
 )
 
 func init() {
-	bocLogger = zerolog.New(os.Stdout).With().
-		Str("plugin", pluginName).
-		Str("version", Version).
-		Logger()
+	bocLogger = slog.New(slog.NewJSONHandler(os.Stdout, nil)).
+		With(pluginName, Version)
 }
 
 func Initialize(url string) contract.Convert {
-	bocLogger.Info().Msgf("initializing with endpoint %q", url)
+	bocLogger.Info("initializing with endpoint", url)
 
 	scraper := scraper.New(&scraper.Config{
 		URL: url,
@@ -36,7 +34,7 @@ func Initialize(url string) contract.Convert {
 	})
 
 	return func(value string) (int, error) {
-		bocLogger.Info().Msgf("looking for value %s", value)
+		bocLogger.Info("looking for value", value)
 		val, err := lookup.Lookup(value)
 		if err != nil {
 			return 0, fmt.Errorf("error looking up value %s, %w", value, err)

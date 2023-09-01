@@ -2,22 +2,22 @@ package hnb
 
 import (
 	"fmt"
+	"log/slog"
 	"strconv"
 	"strings"
 
 	"github.com/DiLRandI/sl-bank-exchangerate/app/scraper"
 	"github.com/DiLRandI/sl-bank-exchangerate/common"
-	"github.com/rs/zerolog"
 )
 
 type Lookup struct {
 	scraper *scraper.Scraper
-	logger  zerolog.Logger
+	logger  *slog.Logger
 }
 
 type Config struct {
 	Scraper *scraper.Scraper
-	Logger  zerolog.Logger
+	Logger  *slog.Logger
 }
 
 func New(c *Config) *Lookup {
@@ -45,14 +45,14 @@ func (l *Lookup) Lookup(code string) (int, error) {
 				convErr = err
 			}
 
-			l.logger.Info().Msgf("found value for %s, %v", code, val)
+			l.logger.Info("found value for", code, val)
 			newVal := val * common.CentsFactor
 			value = int(newVal)
 			keyFound = !keyFound
 		}
 
 		if key == strings.TrimSpace(content) {
-			l.logger.Info().Msgf("key %q is found", key)
+			l.logger.Info("key= is found", key)
 			keyFound = !keyFound
 		}
 	})
